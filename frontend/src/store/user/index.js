@@ -1,4 +1,4 @@
-import { getUser, register } from "../../apis/auth";
+import { getUser, login, register } from "../../apis/auth";
 
 export const user = {
   state() {
@@ -14,6 +14,10 @@ export const user = {
   actions: {
     async registerUser({ commit }, { email, username, password }) {
       const user = await register(email, username, password);
+      commit("setUser", user);
+    },
+    async loginUser({ commit }, { email, password }) {
+      const user = await login(email, password);
       commit("setUser", user);
     },
   },
