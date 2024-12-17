@@ -24,6 +24,14 @@ async function register() {
   });
   router.replace("/");
 }
+
+async function login() {
+  await store.dispatch("loginUser", {
+    email: email.value,
+    password: password.value,
+  });
+  router.push("/");
+}
 </script>
 
 <template>
