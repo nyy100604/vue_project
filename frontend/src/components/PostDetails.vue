@@ -2,33 +2,56 @@
 import PostActions from "./PostActions.vue";
 import TheIcon from "./TheIcon.vue";
 import TheModal from "./TheModal.vue";
+import TheAvatar from "./TheAvatar.vue";
+import { useStore } from "vuex";
+import { computed, ref } from "vue";
+import { dateToRelative } from "../utils/date";
+
+const content = ref("");
+
+const store = useStore();
+const post = computed(() => store.getters.postDetails);
+const comments = computed(() => store.state.comment.list);
 </script>
 
 <template>
   <!-- teleport 將下方的div放置到body下方-->
-  <TheModal>
+  <TheModal @close="$store.dispatch('hidePostDetails')">
     <!-- post詳情 -->
     <div class="postDetails">
-      <!-- <img class="postImage" :src="post.image" alt="" /> -->
+      <img class="postImage" :src="post.image" alt="" />
       <div class="postMeta">
         <div class="author">
-          <TheAvatar />
-          <span>123</span>
+          <TheAvatar :src="post.user?.avatar" />
+          <span>{{ post.user?.name }}</span>
         </div>
-        <pre class="postDesc">
-123
+        <pre class="postDesc"
+          >{{ post.description }}
         </pre>
         <div class="comments">
-          <div class="comment" v-for="n in 10" :key="n">
-            <TheAvatar />
-            <span class="user">Kyle</span>
-            <span class="commentDate">1d</span>
-            <p class="commentContent">very good!</p>
+          <div class="comment" v-for="comment in comments">
+            <TheAvatar :src="comment.user?.avatar" />
+            <span class="user">{{ comment.user?.name }}</span>
+            <span class="commentDate">
+              {{ dateToRelative(comment.pubDate) }}
+            </span>
+            <p class="commentContent">{{ comment.content }}</p>
           </div>
         </div>
         <div class="actions">
-          <PostActions />
-          <span class="postPubDate">12h</span>
+          <PostActions
+            :likes="post.liked_bies"
+            :comments="post.comments"
+            :favors="post.favored_bies"
+            :likedByMe="post.likedByMe"
+            :favoredByMe="post.favoredByMe"
+            @likeClick="this.$store.dispatch('toggleLike', post.id)"
+            @favorClick="$store.dispatch('toggleFavor', post.id)"
+            @commentsClick="$store.dispatch('showPostDetails', post.id)"
+          />
+          <span class="postPubDate">{{
+            dateToRelative(post.publishedAt)
+          }}</span>
           <input
             type="text"
             name="comment"
@@ -37,7 +60,17 @@ import TheModal from "./TheModal.vue";
             class="commentInput"
             placeholder="写一条评论吧！"
           />
-          <button class="commentPubBtn">發布</button>
+          <button
+            @click="
+              $store.dispatch('addComment', {
+                content,
+                postId: post.id,
+              })
+            "
+            class="commentPubBtn"
+          >
+            發布
+          </button>
         </div>
       </div>
     </div></TheModal

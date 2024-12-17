@@ -3,16 +3,28 @@ import PostList from "../components/PostList.vue";
 import PostItem from "../components/PostItem.vue";
 import PostDetails from "../components/PostDetails.vue";
 import PostUpload from "../components/PostUpload.vue";
+import { useStore } from "vuex";
+import { computed, onMounted } from "vue";
+
+const store = useStore();
+
+const showPostUpload = computed(() => store.state.showPostUpload);
+const showPostDetails = computed(() => store.state.showPostDetails);
+const posts = computed(() => store.state.post.list);
+
+onMounted(() => {
+  store.dispatch("loadAllPosts");
+});
 </script>
 
 <template>
   <div>
     <PostList>
-      <PostItem v-for="n in 10" :key="n" />
+      <PostItem v-for="post in posts" :post="post" :key="post.id" />
     </PostList>
 
-    <!-- <PostDetails /> -->
-    <!-- <PostUpload /> -->
+    <PostDetails v-if="showPostDetails" />
+    <PostUpload v-if="showPostUpload" />
   </div>
 </template>
 

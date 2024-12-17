@@ -1,6 +1,13 @@
 <script setup>
 import TheAvatar from "./TheAvatar.vue";
 import TheIcon from "./TheIcon.vue";
+import { useStore } from "vuex";
+
+const store = useStore();
+
+function publishPost() {
+  store.commit("changeShowPostUpload", true);
+}
 </script>
 
 <template>
@@ -16,16 +23,16 @@ import TheIcon from "./TheIcon.vue";
       <RouterLink to="/">
         <TheIcon icon="home" />
       </RouterLink>
-      <button><TheIcon icon="publish" /></button>
+      <button @click="publishPost()"><TheIcon icon="publish" /></button>
       <!-- dropdown -->
       <div class="profileDropDown">
         <TheAvatar :width="42" :height="42" style="cursor: pointer" />
 
         <div class="dropdownMenu">
-          <!-- <ul class="profileMenu"> -->
-          <!-- <li><router-link to="/profile">個人主頁</router-link></li> -->
-          <!-- <li @click="logout">退出登录</li> -->
-          <!-- </ul> -->
+          <ul class="profileMenu">
+            <li><router-link to="/profile">個人主頁</router-link></li>
+            <li @click="logout">退出登录</li>
+          </ul>
         </div>
       </div>
     </div>

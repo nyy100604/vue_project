@@ -1,18 +1,44 @@
-<script setup></script>
+<script setup>
+import { dateToRelative } from "../utils/date";
+import TheAvatar from "../components/TheAvatar.vue";
+import PostActions from "./PostActions.vue";
+defineProps({
+  post: {
+    type: Object,
+    default: {},
+  },
+});
+</script>
 
 <template>
   <div class="postItem">
-    <img src="" alt="" width="100%" height="100%" style="background: #eee" />
+    <img
+      :src="post.image"
+      @click="$store.dispatch('showPostDetails', post.id)"
+      alt=""
+      width="100%"
+      height="100%"
+      style="background: #eee"
+    />
     <div class="postInfo">
       <div class="postMeta">
-        <TheAvatar />
-        <span>劉威成</span>
-        <span class="postPubDate">12小時之前發布</span>
-        <PostActions />
+        <TheAvatar :src="post?.user?.avatar" />
+        <span>{{ post?.user?.name }}</span>
+        <span class="postPubDate">{{ dateToRelative(post.publishedAt) }}</span>
+        <PostActions
+          :likes="post.liked_bies"
+          :comments="post.comments"
+          :favors="post.favored_bies"
+          :likedByMe="post.likedByMe"
+          :favoredByMe="post.favoredByMe"
+          @likeClick="this.$store.dispatch('toggleLike', post.id)"
+          @favorClick="$store.dispatch('toggleFavor', post.id)"
+          @commentsClick="$store.dispatch('showPostDetails', post.id)"
+        />
       </div>
       <div class="postDesc">
         <p>
-          這是一棵樹。這是一棵樹。這是一棵樹這是一棵樹。這是一棵樹。這是一棵樹這是一棵樹。這是一棵樹。這是一棵樹這是一棵樹。這是一棵樹。這是一棵樹這是一棵樹。這是一棵樹。這是一棵樹
+          {{ post.description }}
         </p>
       </div>
     </div>

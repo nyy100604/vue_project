@@ -2,15 +2,43 @@
 import TheModal from "./TheModal.vue";
 import TheIcon from "./TheIcon.vue";
 import TheButton from "./TheButton.vue";
+import { useStore } from "vuex";
+import { ref } from "vue";
+
+const store = useStore();
+// 圖片預覽url
+const imageObjUrl = ref("");
+
+const image = ref(null);
+const description = ref("");
+
+async function handleImageUpload(e) {
+  const imageFile = e.target.files[0];
+  if (imageFile) {
+    imageObjUrl.value = URL.createObjectURL(imageFile);
+    image.value = imageFile;
+  }
+}
+function publishPost() {
+  store.dispatch("uploadPost", {
+    image: image.value,
+    description: description.value,
+  });
+}
 </script>
 
 <template>
-  <TheModal>
+  <TheModal @close="store.commit('changeShowPostUpload', false)">
     <div class="postUpload">
       <label class="upload">
-        <!-- <img v-if="imageObjUrl" :src="imageObjUrl" class="preview" /> -->
-        <TheIcon icon="upload-image" />
-        <input type="file" accept="image/*" class="fileChooser" />
+        <img v-if="imageObjUrl" :src="imageObjUrl" class="preview" />
+        <TheIcon v-else icon="upload-image" />
+        <input
+          type="file"
+          accept="image/*"
+          class="fileChooser"
+          @change="handleImageUpload"
+        />
       </label>
       <div class="postContent">
         <textarea
@@ -18,7 +46,7 @@ import TheButton from "./TheButton.vue";
           class="postContentInput"
           v-model="description"
         ></textarea>
-        <TheButton class="pubBtn">發布</TheButton>
+        <TheButton class="pubBtn" @click="publishPost()">發布</TheButton>
       </div>
     </div>
   </TheModal>
