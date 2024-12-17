@@ -1,5 +1,7 @@
 <script setup>
 import TheIcon from "./TheIcon.vue";
+
+defineEmits(["close"]);
 </script>
 
 <template>
